@@ -84,6 +84,23 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveHermite(controls, segments, showPoints, showLine, showControl, lineColor) {
+        console.log(controls[1]);
+        // x_u = 
+        // slope = d_y/d_x = (d_y/d_u)/(d_x/d_u);
+        // P(0) = 
+        // P(1)
+        // P'(0)
+        //P'(1)
+        let slope = (3*(controls[0][1]**2) + 2*controls[0][1] + controls[0][1])/(3*(controls[0][0]**2) + 2*controls[0][0] + controls[0][0]);
+        P0 = [controls[0][0]**3,controls[0][0]**2,controls[0][0],1];
+        p1 = [controls[1][1]**3,controls[1][1]**2,controls[1][1],1];
+        p_0 = [3*(controls[0][0]**2),2*controls[0][0],controls[0][0],0];
+        p_1 = [3*(controls[1][1]**2),2*controls[1][1],controls[1][1],0];
+        matrix = [p0,p1,p_0,p_1]**-1;
+        for (let i = 0; i < segments; i++){
+
+        }
+        
     }
 
     //------------------------------------------------------------------
