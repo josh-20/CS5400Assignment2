@@ -4,6 +4,7 @@
 // space for use in demonstrating some basic rendering techniques.
 //
 // ------------------------------------------------------------------
+
 MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     'use strict';
 
@@ -84,7 +85,11 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveHermite(controls, segments, showPoints, showLine, showControl, lineColor) {
-        console.log(controls[1]);
+
+        if(showControl){
+            drawPixel(controls[0][0],controls[0][1], "yellow");
+            drawPixel(controls[1][0],controls[1][1], "yellow");
+        }
         // x_u = 
         // slope = d_y/d_x = (d_y/d_u)/(d_x/d_u);
         // P(0) = 
@@ -92,15 +97,20 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         // P'(0)
         //P'(1)
         let slope = (3*(controls[0][1]**2) + 2*controls[0][1] + controls[0][1])/(3*(controls[0][0]**2) + 2*controls[0][0] + controls[0][0]);
-        P0 = [controls[0][0]**3,controls[0][0]**2,controls[0][0],1];
-        p1 = [controls[1][1]**3,controls[1][1]**2,controls[1][1],1];
-        p_0 = [3*(controls[0][0]**2),2*controls[0][0],controls[0][0],0];
-        p_1 = [3*(controls[1][1]**2),2*controls[1][1],controls[1][1],0];
-        matrix = [p0,p1,p_0,p_1]**-1;
+        console.log(controls[0][0],controls[0][1]);
+        let p0 = [controls[0][0]**3,controls[0][0]**2,controls[0][0],1];
+        let p1 = [controls[0][1]**3,controls[0][1]**2,controls[0][1],1];
+        let p_0 = [3*(controls[0][0]**2),2*controls[0][0],1,0];
+        let p_1 = [3*(controls[0][1]**2),2*controls[0][1],controls[0][1],0];
+        let matrix = [p0,p1,p_0,p_1];
+        let invMatrix = inverseMatrix(matrix);
         for (let i = 0; i < segments; i++){
 
         }
-        
+    }
+
+    function inverseMatrix(matrix) {
+
     }
 
     //------------------------------------------------------------------
