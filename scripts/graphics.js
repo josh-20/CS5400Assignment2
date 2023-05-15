@@ -96,21 +96,19 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         // P(1)
         // P'(0)
         //P'(1)
-        let slope = (3*(controls[0][1]**2) + 2*controls[0][1] + controls[0][1])/(3*(controls[0][0]**2) + 2*controls[0][0] + controls[0][0]);
+        let slope1 = (3*(controls[0][1]**2) + 2*controls[0][1] + controls[0][1])/(3*(controls[0][0]**2) + 2*controls[0][0] + controls[0][0]);
+        let slope2 = (3*(controls[1][1]**2) + 2*controls[1][1] + controls[1][1])/(3*(controls[1][0]**2) + 2*controls[1][0] + controls[1][0])
         console.log(controls[0][0],controls[0][1]);
         let p0 = [controls[0][0]**3,controls[0][0]**2,controls[0][0],1];
         let p1 = [controls[0][1]**3,controls[0][1]**2,controls[0][1],1];
         let p_0 = [3*(controls[0][0]**2),2*controls[0][0],1,0];
         let p_1 = [3*(controls[0][1]**2),2*controls[0][1],controls[0][1],0];
-        let matrix = [p0,p1,p_0,p_1];
-        let invMatrix = inverseMatrix(matrix);
+
+        // xu = 
+        // yu =
         for (let i = 0; i < segments; i++){
 
         }
-    }
-
-    function inverseMatrix(matrix) {
-
     }
 
     //------------------------------------------------------------------
