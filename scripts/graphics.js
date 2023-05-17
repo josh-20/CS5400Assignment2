@@ -113,29 +113,29 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let dx = Math.abs(x2 - x1);
         let dy = Math.abs(y2 - y1);
 
-        if(x2 >= x1 && y2 <= y1 && dy >= dx){
+        if(x2 >= x1 && y2 <= y1 && dy >= dx){ // Octant // 0
             drawLineBresenhamY(x1, y1, dx, dy, 1, color);
         }
-        else if (x2 > x1 && y2 <= y1 && dx >= dy){
+        else if (x2 > x1 && y2 <= y1 && dx >= dy){ // Octant 1
             drawLineBresenhamX(x1, y1, dx, dy, -1, color);
         }
-        else if (x2 > x1 && y2 > y1 && dx >= dy){
+        else if (x2 > x1 && y2 > y1 && dx >= dy){ // Octant 2
             drawLineBresenhamX(x1, y1, dx, dy, 1, color);
         }
-        else if (x2 >= x1 && y2 >= y1 && dy >= dx){
+        else if (x2 >= x1 && y2 >= y1 && dy >= dx){ // Octant 3
             drawLineBresenhamY(x2, y2, dx, dy, -1, color);
         }
-        else if (x2 < x1 && y2 >= y1 && dy >= dx){
+        else if (x2 < x1 && y2 >= y1 && dy >= dx){ // Octant 4 
             drawLineBresenhamY(x2, y2, dx, dy, 1, color);
         }
-        else if(x2 < y1 && y2 > y1 && dx >= dy){
+        else if(x2 < y1 && y2 > y1 && dx >= dy){ // Octant 5
             drawLineBresenhamX(x2, y2, dx, dy, -1, color);
         }
-        else if (x2 < x1 && y2 <= y1 && dx >= dy){
+        else if (x2 < x1 && y2 <= y1 && dx >= dy){ // Octant 6
             drawLineBresenhamX(x2, y2, dx, dy, 1, color);
         }
-        else if (x2 < x1 && y2 <= y1 && dy >= dx){
-            drawLineBresenhamY(x1, y1, dx, dy -1, color);
+        else if (x2 < x1 && y2 <= y1 && dy >= dx){ // Octant 7
+            drawLineBresenhamY(x1, y1, dx, dy, -1, color);
         }  
     }
 
@@ -164,8 +164,8 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
         //segments difference
         let deltaU = 1/segments;
-        let prevXU = controls[0][0];
-        let prevYU = controls[0][1];
+        let prevXU = 0;
+        let prevYU = 0;
 
 
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
@@ -174,11 +174,11 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
             }
-            if (showLine){
+            if (showLine && i >= 1){
                 drawLine(prevXU, prevYU, xu, yu, lineColor);
-                prevXU = xu;
-                prevYU = yu;
             }
+            prevXU = xu;
+            prevYU = yu;
             
         }
     }
