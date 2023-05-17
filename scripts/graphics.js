@@ -70,20 +70,20 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         drawPixel(x + 1, y + 1, ptColor);
         drawPixel(x - 1, y + 1, ptColor);
     }
-
+    
     function drawLineBresenhamX(x1, y1, dx, dy, diffY, color){
         let plotX = x1;
         let plotY = y1;
-        let pk = 2* dx - dy;
-        let howMany = dy;
+        let pk = 2* dy - dx;
+        let howMany = dx;
         while (howMany-- >=0){
             drawPixel(plotX, plotY, color);
-            plotY += diffY;
+            plotX++;
             if(pk >= 0){
-                plotX++;
-                pk += (2 * dx - 2 * dy);
+                plotY += diffY;
+                pk += (2 * dy - 2 * dx);
             }else{
-                pk += 2 * dx;
+                pk += 2 * dy;
             }
         }
     }
@@ -112,29 +112,28 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     function drawLine(x1, y1, x2, y2, color) {
         let dx = Math.abs(x2 - x1);
         let dy = Math.abs(y2 - y1);
-
-        if(x2 >= x1 && y2 <= y1 && dy >= dx){ // Octant // 0
+        if(x2 >= x1 && y2 < y1 && dy >= dx){ // Octant // 0
             drawLineBresenhamY(x1, y1, dx, dy, 1, color);
         }
-        else if (x2 > x1 && y2 <= y1 && dx >= dy){ // Octant 1
+        else if (x2 > x1 && y2 <= y1 && dx > dy){ // Octant 1
             drawLineBresenhamX(x1, y1, dx, dy, -1, color);
         }
         else if (x2 > x1 && y2 > y1 && dx >= dy){ // Octant 2
             drawLineBresenhamX(x1, y1, dx, dy, 1, color);
         }
-        else if (x2 >= x1 && y2 >= y1 && dy >= dx){ // Octant 3
+        else if (x2 >= x1 && y2 > y1 && dy > dx){ // Octant 3
             drawLineBresenhamY(x2, y2, dx, dy, -1, color);
         }
-        else if (x2 < x1 && y2 >= y1 && dy >= dx){ // Octant 4 
+        else if (x2 < x1 && y2 > y1 && dy > dx){ // Octant 4 
             drawLineBresenhamY(x2, y2, dx, dy, 1, color);
         }
-        else if(x2 < y1 && y2 > y1 && dx >= dy){ // Octant 5
+        else if(x2 < y1 && y2 >= y1 && dx >= dy){ // Octant 5
             drawLineBresenhamX(x2, y2, dx, dy, -1, color);
         }
-        else if (x2 < x1 && y2 <= y1 && dx >= dy){ // Octant 6
+        else if (x2 < x1 && y2 <= y1 && dx > dy){ // Octant 6
             drawLineBresenhamX(x2, y2, dx, dy, 1, color);
         }
-        else if (x2 < x1 && y2 <= y1 && dy >= dx){ // Octant 7
+        else if (x2 < x1 && y2 < y1 && dy >= dx){ // Octant 7
             drawLineBresenhamY(x1, y1, dx, dy, -1, color);
         }  
     }
@@ -189,14 +188,70 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveCardinal(controls, segments, showPoints, showLine, showControl, lineColor) {
+
+        let t = controls[4][0];
+        let s =  (1-t)/2;
+        //pk and pk-1
+        let pk_x = controls[0][0];
+        let pkm1_x = controls[1][0];
+        let pk_y = controls[0][1];
+        let pkm1_y = controls[1][1];
+
+        //pk+1 and pk+2
+        let pkp1_x = controls[2][0];
+        let pkp2_x = controls[3][0];
+        let pkp1_y = controls[2][1];
+        let pkp2_y = controls[3][1];
+
+        let deltaU = 1/segments;
+        let prevXU = 0;
+        let prevYU = 0;
+
+        for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+            let xu = pkm1_x*(-s*(u**3) + 2*(s*(u**2))- (s*u)) + pk_x*((2-s)*(u**3) + (s-3)*(u**2) + 1) + pkp1_x*((s-2)*(u**3) + (3-2*s)*(u**2) + s*u) + pkp2_x*(s*(u**3) - s*(u**2));
+            let yu = pkm1_y*(-s*(u**3) + 2*(s*(u**2))- (s*u)) + pk_y*((2-s)*(u**3) + (s-3)*(u**2) + 1) + pkp1_y*((s-2)*(u**3) + (3-2*s)*(u**2) + s*u) + pkp2_y*(s*(u**3) - s*(u**2));
+            if (showPoints){
+                drawPoint(xu,yu,"yellow");
+            }
+            if (showLine && i >= 1){
+                drawLine(prevXU, prevYU, xu, yu, lineColor);
+            }
+            prevXU = xu;
+            prevYU = yu;
+        }     
     }
 
+    function factorial(n){
+        if (n==0 || n==1){
+            return 1;
+        }
+        factorial(n-1 * n);
+    }
     //------------------------------------------------------------------
     //
     // Renders a Bezier curve based on the input parameters.
     //
     //------------------------------------------------------------------
     function drawCurveBezier(controls, segments, showPoints, showLine, showControl, lineColor) {
+        n = 3;
+        k = length(controls);
+        c = factorial(n)/(factorial(k)*factorial(n-k));
+
+        for (let i = 0, k_1 = 0, u = 0; i <= segments; i++, k_1++, u += deltaU){
+            xu = 0;
+            for (let c = 0; c < n; c++){
+                xu += BEZ_K_N = c * (u**k((1-u))**(n-k));
+                
+            }
+            if (showPoints){
+                drawPoint(xu,yu,"yellow");
+            }
+            if (showLine && i >= 1){
+                drawLine(prevXU, prevYU, xu, yu, lineColor);
+            }
+            prevXU = xu;
+            prevYU = yu;
+        }     
     }
 
     //------------------------------------------------------------------
