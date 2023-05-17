@@ -71,13 +71,72 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         drawPixel(x - 1, y + 1, ptColor);
     }
 
+    function drawLineBresenhamX(x1, y1, dx, dy, diffY, color){
+        let plotX = x1;
+        let plotY = y1;
+        let pk = 2* dx - dy;
+        let howMany = dy;
+        while (howMany-- >=0){
+            drawPixel(plotX, plotY, color);
+            plotY += diffY;
+            if(pk >= 0){
+                plotX++;
+                pk += (2 * dx - 2 * dy);
+            }else{
+                pk += 2 * dx;
+            }
+        }
+    }
+    function drawLineBresenhamY(x1, y1, dx, dy, diffX, color){
+        let plotX = x1;
+        let plotY = y1;
+        let pk = 2* dx - dy;
+        let howMany = dy;
+        while (howMany-- >=0){
+            drawPixel(plotX, plotY, color);
+            plotX += diffX;
+            if(pk >= 0){
+                plotY++;
+                pk += (2 * dx - 2 * dy);
+            }else{
+                pk += 2 * dx;
+            }
+        }
+    }
+
     //------------------------------------------------------------------
     //
     // Bresenham line drawing algorithm.
     //
     //------------------------------------------------------------------
     function drawLine(x1, y1, x2, y2, color) {
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
 
+        if(x2 >= x1 && y2 <= y1 && dy >= dx){
+            drawLineBresenhamY(x1, y1, dx, dy, 1, color);
+        }
+        else if (x2 > x1 && y2 <= y1 && dx >= dy){
+            drawLineBresenhamX(x1, y1, dx, dy, -1, color);
+        }
+        else if (x2 > x1 && y2 > y1 && dx >= dy){
+            drawLineBresenhamX(x1, y1, dx, dy, 1, color);
+        }
+        else if (x2 >= x1 && y2 >= y1 && dy >= dx){
+            drawLineBresenhamY(x2, y2, dx, dy, -1, color);
+        }
+        else if (x2 < x1 && y2 >= y1 && dy >= dx){
+            drawLineBresenhamY(x2, y2, dx, dy, 1, color);
+        }
+        else if(x2 < y1 && y2 > y1 && dx >= dy){
+            drawLineBresenhamX(x2, y2, dx, dy, -1, color);
+        }
+        else if (x2 < x1 && y2 <= y1 && dx >= dy){
+            drawLineBresenhamX(x2, y2, dx, dy, 1, color);
+        }
+        else if (x2 < x1 && y2 <= y1 && dy >= dx){
+            drawLineBresenhamY(x1, y1, dx, dy -1, color);
+        }  
     }
 
     //------------------------------------------------------------------
@@ -91,27 +150,35 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             drawPixel(controls[0][0],controls[0][1], "yellow");
             drawPixel(controls[2][0],controls[2][1], "yellow");
         }
+        // control point and slope for x(u)
         let p0_x = controls[0][0];
         let p1_x = controls[2][0];
         let p_0_x = controls[1][1];
         let p_1_x = controls[3][1];
+
+        // control point and slopes for y(u)
         let p0_y = controls[0][1];
         let p1_y = controls[2][1];
         let p_0_y = controls[1][0];
         let p_1_y = controls[3][0];
 
-        let delta = 1/segments;
-        let currentX = controls[0][0] + delta;
-        let currentY = controls[0][1] + delta;
-        for (let i = 0; i < segments; i++){
-            let xu = (p0_x*(2*(currentX**3)-3*(currentX**2) + 1) + p1_x*(-2*(currentX**3)+3*(currentX**2)) + p_0_x*(currentX**3 - 2*(currentX**2) + currentX) + p_1_x*(currentX**3 - currentX**2));
-            let yu = (p0_y*(2*(currentY**3)-3*(currentY**2) + 1) + p1_y*(-2*(currentY**3)+3*(currentY**2)) + p_0_y*(currentY**3 - 2*(currentY**2) + currentY) + p_1_y*(currentY**3 - currentY**2));
+        //segments difference
+        let deltaU = 1/segments;
+        let prevXU = controls[0][0];
+        let prevYU = controls[0][1];
 
+
+        for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+            let xu = (p0_x*(2*(u**3)-3*(u**2) + 1) + p1_x*(-2*(u**3)+3*(u**2)) + p_0_x*(u**3 - 2*(u**2) + u) + p_1_x*(u**3 - u**2));
+            let yu = (p0_y*(2*(u**3)-3*(u**2) + 1) + p1_y*(-2*(u**3)+3*(u**2)) + p_0_y*(u**3 - 2*(u**2) + u) + p_1_y*(u**3 - u**2));
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
             }
-            currentX += delta;
-            currentY += delta;
+            if (showLine){
+                drawLine(prevXU, prevYU, xu, yu, lineColor);
+                prevXU = xu;
+                prevYU = yu;
+            }
             
         }
     }
