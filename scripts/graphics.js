@@ -77,6 +77,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawLine(x1, y1, x2, y2, color) {
+
     }
 
     //------------------------------------------------------------------
@@ -88,25 +89,30 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
         if(showControl){
             drawPixel(controls[0][0],controls[0][1], "yellow");
-            drawPixel(controls[1][0],controls[1][1], "yellow");
+            drawPixel(controls[2][0],controls[2][1], "yellow");
         }
-        // x_u = 
-        // slope = d_y/d_x = (d_y/d_u)/(d_x/d_u);
-        // P(0) = 
-        // P(1)
-        // P'(0)
-        //P'(1)
-        let slope1 = (3*(controls[0][1]**2) + 2*controls[0][1] + controls[0][1])/(3*(controls[0][0]**2) + 2*controls[0][0] + controls[0][0]);
-        let slope2 = (3*(controls[1][1]**2) + 2*controls[1][1] + controls[1][1])/(3*(controls[1][0]**2) + 2*controls[1][0] + controls[1][0])
-        let p0 = [controls[0][0]**3,controls[0][0]**2,controls[0][0],1];
-        let p1 = [controls[0][1]**3,controls[0][1]**2,controls[0][1],1];
-        let p_0 = [3*(controls[0][0]**2),2*controls[0][0],1,0];
-        let p_1 = [3*(controls[0][1]**2),2*controls[0][1],controls[0][1],0];
+        let p0_x = controls[0][0];
+        let p1_x = controls[2][0];
+        let p_0_x = controls[1][1];
+        let p_1_x = controls[3][1];
+        let p0_y = controls[0][1];
+        let p1_y = controls[2][1];
+        let p_0_y = controls[1][0];
+        let p_1_y = controls[3][0];
 
-        // xu = 
-        // yu =
+        let delta = 1/segments;
+        let currentX = controls[0][0] + delta;
+        let currentY = controls[0][1] + delta;
         for (let i = 0; i < segments; i++){
+            let xu = (p0_x*(2*(currentX**3)-3*(currentX**2) + 1) + p1_x*(-2*(currentX**3)+3*(currentX**2)) + p_0_x*(currentX**3 - 2*(currentX**2) + currentX) + p_1_x*(currentX**3 - currentX**2));
+            let yu = (p0_y*(2*(currentY**3)-3*(currentY**2) + 1) + p1_y*(-2*(currentY**3)+3*(currentY**2)) + p_0_y*(currentY**3 - 2*(currentY**2) + currentY) + p_1_y*(currentY**3 - currentY**2));
 
+            if (showPoints){
+                drawPoint(xu,yu,"yellow");
+            }
+            currentX += delta;
+            currentY += delta;
+            
         }
     }
 

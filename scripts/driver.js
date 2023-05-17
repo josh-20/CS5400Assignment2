@@ -17,7 +17,7 @@ MySample.main = (function(graphics) {
     //------------------------------------------------------------------
     function render() {
         graphics.clear();
-        graphics.drawCurve(0, [[0,1], [10,10]], 4, true,true,true, "blue");
+        graphics.drawCurve(0, [[250,500],[1,2], [500,500], [1,2]], 4, true,true,true, "blue");
     }
 
     //------------------------------------------------------------------
