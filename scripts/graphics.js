@@ -233,22 +233,26 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveBezier(controls, segments, showPoints, showLine, showControl, lineColor) {
-        n = 3;
-        k = length(controls);
-        c = factorial(n)/(factorial(k)*factorial(n-k));
+        let n = 3;
+        let k = controls.length;
+        let c = factorial(n)/(factorial(k)*factorial(n-k));
+        let prevXU = 0;
+        let prevYU = 0;
+        let deltaU = 1/segments
 
         for (let i = 0, k_1 = 0, u = 0; i <= segments; i++, k_1++, u += deltaU){
-            xu = 0;
-            for (let c = 0; c < n; c++){
-                xu += BEZ_K_N = c * (u**k((1-u))**(n-k));
-                
-            }
+            let xu = controls[0][0]*(c * ((u**k_1)*((1-u))**(n-k_1))) + controls[1][0]*(c * ((u**k_1)*((1-u))**(n-k_1))) + controls[2][0]*(c * ((u**k_1)*((1-u))**(n-k_1)))+ controls[3][0]*(c * ((u**k_1)*((1-u))**(n-k_1)));
+            let yu = controls[0][1]*(c * ((u**k_1)*(((1-u))**(n-k_1))) + controls[1][1]*(c * ((u**k_1)*((1-u))**(n-k_1))) + controls[2][1]*(c * ((u**k_1)*((1-u))**(n-k_1)))+ controls[3][1]*(c * ((u**k_1)*((1-u))**(n-k_1))));
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
             }
             if (showLine && i >= 1){
                 drawLine(prevXU, prevYU, xu, yu, lineColor);
             }
+            if(showControl){
+                drawPoint(controls[0][0], controls[0][1], 'color')
+                drawPoint(controls[2][0], controls[2][1], 'color')
+              }
             prevXU = xu;
             prevYU = yu;
         }     
