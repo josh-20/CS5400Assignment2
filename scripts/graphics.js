@@ -225,7 +225,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         if (n==0 || n==1){
             return 1;
         }
-        return factorial(n-1 * n);
+        return factorial(n-1) * n;
     
     }
     //------------------------------------------------------------------
@@ -244,9 +244,9 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             let yu = 0;
             for(let k = 0; k <= n; k++){
                 let c = factorial(n)/(factorial(k)*factorial(n-k));
-                let BEZ = c * (u**k) * (1-u)**(n-k);
-                xu = controls[k][0] * BEZ;// + controls[1][0] * BEZ + controls[2][0] * BEZ + controls[3][0];
-                yu = controls[k][1] * BEZ;// + controls[1][1] * BEZ + controls[2][1] * BEZ + controls[3][1];
+                let BEZ = c * (Math.pow(u,k)) * Math.pow(1-u, n-k);
+                xu = controls[k][0] * BEZ;
+                yu = controls[k][1] * BEZ;
             }
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
@@ -271,6 +271,42 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveBezierMatrix(controls, segments, showPoints, showLine, showControl, lineColor) {
+        
+        if(showControl){
+            drawPixel(controls[0][0],controls[0][1], "yellow");
+            drawPixel(controls[2][0],controls[2][1], "yellow");
+        }
+        // control point and slope for x(u)
+        let p0_x = controls[0][0];
+        let p1_x = controls[2][0];
+        let p_0_x = controls[1][0];
+        let p_1_x = controls[3][0];
+
+        // control point and slopes for y(u)
+        let p0_y = controls[0][1];
+        let p1_y = controls[2][1];
+        let p_0_y = controls[1][1];
+        let p_1_y = controls[3][1];
+
+        //segments difference
+        let deltaU = 1/segments;
+        let prevXU = 0;
+        let prevYU = 0;
+
+
+        for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+            let xu = (p0_x*(u**3) + p1_x*(-3*(u**3)+3*(u**2)) + p_0_x*(3*(u**3) - 6*(u**2) + 3*u) + p_1_x*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
+            let yu = (p0_y*(u**3) + p1_y*(-3*(u**3)+3*(u**2)) + p_0_y*(3*(u**3) - 6*(u**2) + 3*u) + p_1_y*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
+            if (showPoints){
+                drawPoint(xu,yu,"yellow");
+            }
+            if (showLine && i >= 1){
+                drawLine(prevXU, prevYU, xu, yu, lineColor);
+            }
+            prevXU = xu;
+            prevYU = yu;
+            
+        }
     }
 
     //------------------------------------------------------------------
