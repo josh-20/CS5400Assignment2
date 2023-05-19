@@ -207,6 +207,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     // Renders an Hermite curve based on the input parameters.
     //
     //------------------------------------------------------------------
+
     function drawCurveHermite(controls, segments, showPoints, showLine, showControl, lineColor) {
 
         if(showControl){
@@ -229,8 +230,16 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let deltaU = 1/segments;
         let prevXU = 0;
         let prevYU = 0;
-
-
+        
+        let optUHermite = function(){
+            let memo = [];
+            return function inner(u, segments, deltaU){
+                if (memo[segments] === undefined){
+                    memo[segments] = u += deltaU;
+                }
+                return memo[u];
+            }
+        }
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
             let xu = (p0_x*(2*(u**3)-3*(u**2) + 1) + p1_x*(-2*(u**3)+3*(u**2)) + p_0_x*(u**3 - 2*(u**2) + u) + p_1_x*(u**3 - u**2));
             let yu = (p0_y*(2*(u**3)-3*(u**2) + 1) + p1_y*(-2*(u**3)+3*(u**2)) + p_0_y*(u**3 - 2*(u**2) + u) + p_1_y*(u**3 - u**2));
@@ -285,13 +294,32 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         }     
     }
 
-    function factorial(n){
-        if (n==0 || n==1){
-            return 1;
+    // memoize for Bezier non matrix
+    let factorial = function() {
+        let f = [1, 1];
+        return function inner(n){
+            if(n > f.length - 1){
+                f[n] = inner(n - 1) * n;
+            }
+            return f[n];
         }
-        return factorial(n-1) * n;
     
+    }();
+    function compute(n,k){
+        return factorial(n)/(factorial(k)*factorial(n-k));
     }
+    let blendC = function(){
+        let memo = []
+        return function inner (n,k){
+            if (n > memo.length - 1){
+                memo[n] = [];
+                memo[n][k] = compute(n,k);
+            }else if (n < memo.length && k > memo[n].length - 1){
+                memo[n][k] = compute(n,k);
+            }
+            return memo[n][k]
+        }
+    }()
     //------------------------------------------------------------------
     //
     // Renders a Bezier curve based on the input parameters.
@@ -302,15 +330,33 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let prevXU = 0;
         let prevYU = 0;
         let deltaU = 1/segments
-        let xu = 0;
-        let yu = 0;
+        if(showControl){
+            drawPixel(controls[1][0],controls[1][1], "yellow");
+            drawPixel(controls[2][0],controls[2][1], "yellow");
+        }
+        let bezUMemo = function(){
+            let memo = []
+            return function inner(n,u,k){
+                if (memo[n] === undefined){
+                    memo[n] = [];
+                }if (memo[n][k] === undefined){
+                    memo[n][k] = [];
+                }
+                if (memo[n][k][u] === undefined){
+                    let c = blendC(n,k); 
+                    memo[n][k][u] = c*(u**k)*((1-u)**(n-k));
+                }
+                return memo[n][k][u];
+            }   
+        }()
 
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+            let xu = 0;
+            let yu = 0;
             for(let k = 0; k <= n; k++){
-                let c = factorial(n)/(factorial(k)*factorial(n-k));
-                let BEZ = c*(u**k)* ((1-u)**(n-k));
-                xu = controls[k][0] * BEZ;
-                yu = controls[k][1] * BEZ;
+                let BEZ = bezUMemo(n,u,k);
+                xu += controls[k][0] * BEZ;
+                yu += controls[k][1] * BEZ;
             }
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
@@ -318,10 +364,6 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             if (showLine && i >= 1){
                 drawLine(prevXU, prevYU, xu, yu, lineColor);
             }
-            if(showControl){
-                drawPoint(controls[0][0], controls[0][1], 'color')
-                drawPoint(controls[2][0], controls[2][1], 'color')
-                }
             prevXU = xu;
             prevYU = yu;
         }     
@@ -342,15 +384,15 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         }
         // control point and slope for x(u)
         let p0_x = controls[0][0];
-        let p1_x = controls[2][0];
+        let p1_x = controls[3][0];
         let p_0_x = controls[1][0];
-        let p_1_x = controls[3][0];
+        let p_1_x = controls[2][0];
 
         // control point and slopes for y(u)
         let p0_y = controls[0][1];
-        let p1_y = controls[2][1];
+        let p1_y = controls[3][1];
         let p_0_y = controls[1][1];
-        let p_1_y = controls[3][1];
+        let p_1_y = controls[2][1];
 
         //segments difference
         let deltaU = 1/segments;
@@ -359,8 +401,8 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
 
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
-            let xu = (p0_x*(u**3) + p1_x*(-3*(u**3)+3*(u**2)) + p_0_x*(3*(u**3) - 6*(u**2) + 3*u) + p_1_x*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
-            let yu = (p0_y*(u**3) + p1_y*(-3*(u**3)+3*(u**2)) + p_0_y*(3*(u**3) - 6*(u**2) + 3*u) + p_1_y*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
+            let xu = (p0_x*(u**3) + p_0_x*(-3*(u**3)+3*(u**2)) + p_1_x*(3*(u**3) - 6*(u**2) + 3*u) + p1_x*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
+            let yu = (p0_y*(u**3) + p_0_y*(-3*(u**3)+3*(u**2)) + p_1_y*(3*(u**3) - 6*(u**2) + 3*u) + p1_y*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
             }
