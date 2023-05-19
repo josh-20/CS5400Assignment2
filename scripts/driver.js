@@ -20,7 +20,7 @@ MySample.main = (function(graphics) {
         // graphics.drawCurve(0, [[250,500],[200,500], [500,500], [-200,200]], 10, true,true,true, "blue");
         // graphics.drawCurve(1, [[250,500],[200,400], [500,500], [600,550], [25] ], 50, true,true,true, "orange");
         // graphics.drawCurve(2, [[250,500],[200,400], [500,500], [600,550]], 10, true,true,true, "blue");
-        // graphics.drawCurve(3, [[250,500],[200,400], [500,500], [600,550]], 10, true,true,true, "blue");
+        graphics.drawCurve(graphics.Curve.Bezier, [[200,450],[400,700],[600,200],[800,450]], 50, true,true,true, "rgb(0, 0, 255)");
         graphics.drawCurve(graphics.Curve.BezierMatrix, [[200,400],[400,700],[600,200],[800,400]], 50, true,true,true, "rgb(0, 0, 255)");
         
     }

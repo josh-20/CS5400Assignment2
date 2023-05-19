@@ -71,38 +71,6 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         drawPixel(x - 1, y + 1, ptColor);
     }
     
-    function drawLineBresenhamX(x1, y1, dx, dy, diffY, color){
-        let plotX = x1;
-        let plotY = y1;
-        let pk = 2* dy - dx;
-        let howMany = dx;
-        while (howMany-- >=0){
-            drawPixel(plotX, plotY, color);
-            plotX++;
-            if(pk >= 0){
-                plotY += diffY;
-                pk += (2 * dy - 2 * dx);
-            }else{
-                pk += 2 * dy;
-            }
-        }
-    }
-    function drawLineBresenhamY(x1, y1, dx, dy, diffX, color){
-        let plotX = x1;
-        let plotY = y1;
-        let pk = 2* dx - dy;
-        let howMany = dy;
-        while (howMany-- >=0){
-            drawPixel(plotX, plotY, color);
-            plotX += diffX;
-            if(pk >= 0){
-                plotY++;
-                pk += (2 * dx - 2 * dy);
-            }else{
-                pk += 2 * dx;
-            }
-        }
-    }
 
     //------------------------------------------------------------------
     //
@@ -110,32 +78,128 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawLine(x1, y1, x2, y2, color) {
-        let dx = Math.abs(x2 - x1);
-        let dy = Math.abs(y2 - y1);
-        if(x2 >= x1 && y2 < y1 && dy >= dx){ // Octant // 0
-            drawLineBresenhamY(x1, y1, dx, dy, 1, color);
+        let deltaX = Math.abs(x2 - x1);
+        let deltaY = Math.abs(y2 - y1);
+        let m = deltaY/deltaX;
+        let b = y1 - m * x1;
+        let c = 2 * deltaY + (deltaX * (2 * b - 1));
+        let pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
+        
+        // Octant 0
+        if(x1 < x2 && y2 < y1 && deltaX < deltaY) {
+            [deltaX,deltaY] = [deltaY,deltaX];
+            m = deltaY/deltaX;
+            b = y1 - m * x1;
+            c = 2 * deltaY + (deltaX * (2 * b - 1));
+            pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
+            for(let y = y1; y >= y2; y--){
+                drawPixel(x1,y,color);
+                if(pk >= 0) {
+                    pk = pk + 2 * deltaY - 2 * deltaX;
+                    x1++;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if (x2 > x1 && y2 <= y1 && dx > dy){ // Octant 1
-            drawLineBresenhamX(x1, y1, dx, dy, -1, color);
+        // Octant 7
+        else if(x1 > x2 && y2 < y1 && deltaX < deltaY) {
+            [deltaX,deltaY] = [deltaY,deltaX];
+            m = deltaY/deltaX;
+            b = y1 - m * x1;
+            c = 2 * deltaY + (deltaX * (2 * b - 1));
+            pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
+            for(let y = y1; y >= y2; y--){
+                drawPixel(x1,y,color);
+                if(pk >= 0) {
+                    pk = pk + 2 * deltaY - 2 * deltaX;
+                    x1--;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if (x2 > x1 && y2 > y1 && dx >= dy){ // Octant 2
-            drawLineBresenhamX(x1, y1, dx, dy, 1, color);
+        else if (x1 < x2 && y1 < y2 && deltaX < deltaY){ // Octant 3
+            [deltaX,deltaY] = [deltaY,deltaX];
+            m = deltaY/deltaX;
+            b = y1 - m * x1;
+            c = 2 * deltaY + (deltaX * (2 * b - 1));
+            pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
+            for(let y = y1; y <= y2; y++){
+                drawPixel(x1,y,color);
+                if(pk >= 0) {
+                    pk = pk + 2 * deltaY - 2 * deltaX;
+                    x1++;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if (x2 >= x1 && y2 > y1 && dy > dx){ // Octant 3
-            drawLineBresenhamY(x2, y2, dx, dy, -1, color);
+        else if (x1 > x2 && y1 < y2 && deltaX < deltaY){ // Octant 4
+            [deltaX,deltaY] = [deltaY,deltaX];
+            m = deltaY/deltaX;
+            b = y1 - m * x1;
+            c = 2 * deltaY + (deltaX * (2 * b - 1));
+            pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
+            for(let y = y1; y <= y2; y++){
+                drawPixel(x1,y,color);
+                if(pk >= 0) {
+                    pk = pk + 2 * deltaY - 2 * deltaX;
+                    x1--;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
+
         }
-        else if (x2 < x1 && y2 > y1 && dy > dx){ // Octant 4 
-            drawLineBresenhamY(x2, y2, dx, dy, 1, color);
+        // Octant 1
+        else if(x1 < x2 && (y2 - y1) > 0){
+            for(let x = x1; x <= x2; x++){
+                drawPixel(x,y1,color);
+                if(pk >= 0) {
+                    pk = pk + ((2 * deltaY) - (2 * deltaX));
+                    y1++;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if(x2 < y1 && y2 >= y1 && dx >= dy){ // Octant 5
-            drawLineBresenhamX(x2, y2, dx, dy, -1, color);
+        //Octant 2
+       else if(x1 < x2 && y2 < y1){
+            for(let x = x1; x < x2; x++){
+                drawPixel(x,y1,color);
+                if(pk >= 0) {
+                    pk = pk + ((2 * deltaY) - (2 * deltaX));
+                    y1--;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if (x2 < x1 && y2 <= y1 && dx > dy){ // Octant 6
-            drawLineBresenhamX(x2, y2, dx, dy, 1, color);
+        // Octant 6
+        else if (x2 < x1 && y2 < y1){
+            for(let x = x1; x > x2; x--){
+                drawPixel(x,y1,color);
+                if(pk >= 0) {
+                    pk = pk + ((2 * deltaY) - (2 * deltaX));
+                    y1--;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
         }
-        else if (x2 < x1 && y2 < y1 && dy >= dx){ // Octant 7
-            drawLineBresenhamY(x1, y1, dx, dy, -1, color);
-        }  
+        //Octant 5
+        else if (x2 < x1 && y2 > y1){
+            for(let x = x1; x > x2; x--){
+                drawPixel(x,y1,color);
+                if(pk >= 0) {
+                    pk = pk + ((2 * deltaY) - (2 * deltaX));
+                    y1++;
+                }else{
+                    pk = pk + (2 * deltaY);
+                }
+            }
+        } 
     }
 
     //------------------------------------------------------------------
@@ -238,13 +302,13 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let prevXU = 0;
         let prevYU = 0;
         let deltaU = 1/segments
+        let xu = 0;
+        let yu = 0;
 
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
-            let xu = 0;
-            let yu = 0;
             for(let k = 0; k <= n; k++){
                 let c = factorial(n)/(factorial(k)*factorial(n-k));
-                let BEZ = c * (Math.pow(u,k)) * Math.pow(1-u, n-k);
+                let BEZ = c*(u**k)* ((1-u)**(n-k));
                 xu = controls[k][0] * BEZ;
                 yu = controls[k][1] * BEZ;
             }
@@ -273,7 +337,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     function drawCurveBezierMatrix(controls, segments, showPoints, showLine, showControl, lineColor) {
         
         if(showControl){
-            drawPixel(controls[0][0],controls[0][1], "yellow");
+            drawPixel(controls[1][0],controls[1][1], "yellow");
             drawPixel(controls[2][0],controls[2][1], "yellow");
         }
         // control point and slope for x(u)
