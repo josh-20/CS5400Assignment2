@@ -213,6 +213,8 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         if(showControl){
             drawPixel(controls[0][0],controls[0][1], "yellow");
             drawPixel(controls[2][0],controls[2][1], "yellow");
+            drawLine(controls[0][0], controls[0][1], controls[0][0] + controls[1][0], controls[0][1] + controls[1][1], "white");
+            drawLine(controls[2][0], controls[2][1], controls[3][0] + controls[2][0], controls[3][1] + controls[2][1], "white");
         }
         // control point and slope for x(u)
         let p0_x = controls[0][0];
@@ -228,27 +230,30 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
         //segments difference
         let deltaU = 1/segments;
-        let prevXU = 0;
-        let prevYU = 0;
+        let prevXU = p0_x;
+        let prevYU = p0_y;
         
         let optUHermite = function(){
             let memo = [];
-            return function inner(u, segments, deltaU){
-                if (memo[segments] === undefined){
-                    memo[segments] = u += deltaU;
+            return function inner(u){
+                if (memo[u] === undefined){
+                    memo[u] = u;
                 }
                 return memo[u];
             }
-        }
-        for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+        }()
+        let u = 0;
+        for (let i = 0; i <= segments; i++){
+            u = optUHermite(u)
             let xu = (p0_x*(2*(u**3)-3*(u**2) + 1) + p1_x*(-2*(u**3)+3*(u**2)) + p_0_x*(u**3 - 2*(u**2) + u) + p_1_x*(u**3 - u**2));
             let yu = (p0_y*(2*(u**3)-3*(u**2) + 1) + p1_y*(-2*(u**3)+3*(u**2)) + p_0_y*(u**3 - 2*(u**2) + u) + p_1_y*(u**3 - u**2));
+            if (showLine){
+                drawLine(prevXU, prevYU, xu, yu, lineColor);
+            }
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
             }
-            if (showLine && i >= 1){
-                drawLine(prevXU, prevYU, xu, yu, lineColor);
-            }
+            u += deltaU;
             prevXU = xu;
             prevYU = yu;
             
@@ -261,6 +266,10 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     //
     //------------------------------------------------------------------
     function drawCurveCardinal(controls, segments, showPoints, showLine, showControl, lineColor) {
+        if (showControl){
+            drawPixel(controls[0][0],controls[0][1], "yellow");
+            drawPixel(controls[2][0],controls[2][1], "yellow");
+        }
 
         let t = controls[4][0];
         let s =  (1-t)/2;
@@ -283,11 +292,11 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
             let xu = pkm1_x*(-s*(u**3) + 2*(s*(u**2))- (s*u)) + pk_x*((2-s)*(u**3) + (s-3)*(u**2) + 1) + pkp1_x*((s-2)*(u**3) + (3-2*s)*(u**2) + s*u) + pkp2_x*(s*(u**3) - s*(u**2));
             let yu = pkm1_y*(-s*(u**3) + 2*(s*(u**2))- (s*u)) + pk_y*((2-s)*(u**3) + (s-3)*(u**2) + 1) + pkp1_y*((s-2)*(u**3) + (3-2*s)*(u**2) + s*u) + pkp2_y*(s*(u**3) - s*(u**2));
+            if (showLine && i >= 1){
+                drawLine(xu, yu, prevXU, prevYU, lineColor);
+            }
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
-            }
-            if (showLine && i >= 1){
-                drawLine(prevXU, prevYU, xu, yu, lineColor);
             }
             prevXU = xu;
             prevYU = yu;
@@ -399,8 +408,18 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let prevXU = 0;
         let prevYU = 0;
 
-
-        for (let i = 0, u = 0; i <= segments; i++, u += deltaU){
+        let optUBezier = function(){
+            let memo = [];
+            return function inner(u){
+                if (memo[u] === undefined){
+                    memo[u][0] = [u**3, -3*(u**3)+3*(u**2), 3*(u**3) - 6*(u**2) + 3*u, -1*(u**3) + 3*(u**2) - 3*(u) + 1];
+                }
+                return memo[u][0];
+            }
+        }()
+        let u = [];
+        for (let i = 0; i <= segments; i++){
+            u = optUBezier(u);
             let xu = (p0_x*(u**3) + p_0_x*(-3*(u**3)+3*(u**2)) + p_1_x*(3*(u**3) - 6*(u**2) + 3*u) + p1_x*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
             let yu = (p0_y*(u**3) + p_0_y*(-3*(u**3)+3*(u**2)) + p_1_y*(3*(u**3) - 6*(u**2) + 3*u) + p1_y*(-1*(u**3) + 3*(u**2) - 3*(u) + 1));
             if (showPoints){
@@ -411,6 +430,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             }
             prevXU = xu;
             prevYU = yu;
+            u += deltaU;
             
         }
     }
