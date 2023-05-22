@@ -452,6 +452,97 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             
         }
     }
+    //------------------------------------------------------------------
+//
+// Renders a primitive of the form: {
+//    verts: [ {x, y}, ...],    // Must have at least 2 verts
+//    center: { x, y }
+// }
+// 
+// connect: If true, the last vertex and first vertex have a line drawn between them.
+//
+// color: The color to use when drawing the lines
+//
+//------------------------------------------------------------------
+function drawPrimitive(primitive, connect, color) {
+}
+
+
+//------------------------------------------------------------------
+//
+// Translates a point of the form: { x, y }
+//
+// distance: { x, y }
+//
+//------------------------------------------------------------------
+function translatePoint(point, distance) {
+}
+//------------------------------------------------------------------
+//
+// Scales a primitive of the form: {
+//    verts: [],    // Must have at least 2 verts
+//    center: { x, y }
+// }
+//
+// scale: { x, y }
+//
+//------------------------------------------------------------------
+function scalePrimitive(primitive, scale) {
+}
+//------------------------------------------------------------------
+//
+// Rotates a primitive of the form: {
+//    verts: [],    // Must have at least 2 verts
+//    center: { x, y }
+// }
+//
+// angle: radians
+//
+//------------------------------------------------------------------
+function rotatePrimitive(primitive, angle) {
+}
+//------------------------------------------------------------------
+//
+// Scales a curve relative to its center.
+//    type: Cardinal, Bezier
+//    controls: appropriate to the curve type
+//    scale: { x, y }
+//
+//------------------------------------------------------------------
+function scaleCurve(type, controls, scale) {
+}
+//------------------------------------------------------------------
+//
+// Rotates a curve about its center.
+//    type: Cardinal, Bezier
+//    controls: appropriate to the curve type
+//    angle: radians
+//
+//------------------------------------------------------------------
+function rotateCurve(type, controls, angle) {
+}
+//------------------------------------------------------------------
+//
+// Translates a curve.
+//    type: Cardinal, Bezier
+//    controls: appropriate to the curve type
+//    distance: { x, y }
+//
+//------------------------------------------------------------------
+function translateCurve(type, controls, distance) {
+}
+//------------------------------------------------------------------
+//
+// Translates a primitive of the form: {
+//    verts: [],    // Must have at least 2 verts
+//    center: { x, y }
+// }
+//
+// distance: { x, y }
+//
+//------------------------------------------------------------------
+function translatePrimitive(primitive, distance) {
+}
 
     //------------------------------------------------------------------
     //
@@ -484,7 +575,14 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         clear: clear,
         drawPixel: drawPixel,
         drawLine: drawLine,
-        drawCurve: drawCurve
+        drawCurve: drawCurve,
+        drawPrimitive: drawPrimitive,
+        translatePrimitive: translatePrimitive,
+        scalePrimitive: scalePrimitive,
+        rotatePrimitive: rotatePrimitive,
+        translateCurve: translateCurve,
+        scaleCurve: scaleCurve,
+        rotateCurve: rotateCurve
     };
 
     Object.defineProperty(api, 'sizeX', {
