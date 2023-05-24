@@ -103,7 +103,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             }
         }
         // Octant 7
-        else if(x1 >= x2 && y2 < y1 && deltaX < deltaY) {
+        else if(x1 > x2 && y2 < y1 && deltaX < deltaY) {
             [deltaX,deltaY] = [deltaY,deltaX];
             m = deltaY/deltaX;
             b = y1 - m * x1;
@@ -466,24 +466,18 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 //------------------------------------------------------------------
 function drawPrimitive(primitive, connect, color) {
     for(let i = 0; i < primitive.x.length; i++){
-        drawPoint(primitive.x[i],primitive.y[i],color);
+        drawPoint(primitive.x[i],primitive.y[i],"white");
         if(i >= 1){
-            if(connect){
-                drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
-            }else{
-                if(i == primitive.length - 1){
-                    return;
-                }
-                drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
-            }
+           
+            drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
         }
-        drawPoint(primitive.center[0],primitive.center[1], "yellow");
     }
-        
+    if (connect){
+        drawLine(primitive.x[0], primitive.y[0], primitive.x[primitive.x.length - 1], primitive.y[primitive.y.length - 1], color)
+    }
+    drawPoint(primitive.center[0],primitive.center[1], "yellow");
+    
 }
-
-
-
 //------------------------------------------------------------------
 //
 // Translates a point of the form: { x, y }
@@ -493,13 +487,10 @@ function drawPrimitive(primitive, connect, color) {
 //------------------------------------------------------------------
 function translatePoint(point, distance) {
     deltaX = distance.x - point.x;
-    deltaY = distance.x = point.y;
-
+    deltaY = distance.y - point.y;
     point.x += deltaX;
     point.y += deltaY;
-
     return point;
-
 }
 //------------------------------------------------------------------
 //
