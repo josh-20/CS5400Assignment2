@@ -468,7 +468,6 @@ function drawPrimitive(primitive, connect, color) {
     for(let i = 0; i < primitive.x.length; i++){
         drawPoint(primitive.x[i],primitive.y[i],"white");
         if(i >= 1){
-           
             drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
         }
     }
@@ -486,43 +485,72 @@ function drawPrimitive(primitive, connect, color) {
 //
 //------------------------------------------------------------------
 function translatePoint(point, distance) {
-    deltaX = distance.x - point.x;
-    deltaY = distance.y - point.y;
-    point.x += deltaX;
-    point.y += deltaY;
+    point.x += distance.x;
+    point.y += distance.y;
     return point;
 }
 //------------------------------------------------------------------
 //
 // Scales a primitive of the form: {
-//    verts: [],    // Must have at least 2 verts
-//    center: { x, y }
-// }
-//
+    //    verts: [],    // Must have at least 2 verts
+    //    center: { x, y }
+    // }
+    //
 // scale: { x, y }
 //
 //------------------------------------------------------------------
 function scalePrimitive(primitive, scale) {
     for(let i = 0; i < primitive.x.length; i++){
-        let t = translatePoint({x: primitive.x[i], y: primitive.y[i]},{x: primitive.center[0], y: primitive.center[1]})
+        let t = translatePoint({x: primitive.x[i], y: primitive.y[i]},{x: -primitive.center[0], y: -primitive.center[1]});
         primitive.x[i] = t.x;
         primitive.y[i] = t.y;
-        px = scale.x * primitive.x[i];
-        py = scale.y * primitive.y[i];
-        drawPoint(primitive.x[i],primitive.y[i], "yellow");
+        primitive.x[i] = scale.x * primitive.x[i];
+        primitive.y[i] = scale.y * primitive.y[i];
+        let t2 = translatePoint({x: primitive.x[i], y: primitive.y[i]}, {x: primitive.center[0], y: primitive.center[1]})
+        primitive.x[i] = t2.x;
+        primitive.y[i] = t2.y;
     }    
+    drawPrimitive(primitive, true, "yellow");
 }
 //------------------------------------------------------------------
 //
 // Rotates a primitive of the form: {
+    //    verts: [],    // Must have at least 2 verts
+    //    center: { x, y }
+    // }
+    //
+    // angle: radians
+//
+//------------------------------------------------------------------
+function rotatePrimitive(primitive, angle) {
+    for(let i = 0; i < primitive.x.length; i++){
+        let t1 = translatePoint({x:primitive.x[i],y: primitive.y[i]}, {x: -primitive.center[0], y: -primitive.center[1]}); // translate in
+        primitive.x[i] = (t1.x * Math.cos(angle) + (t1.y * -Math.sin(angle)));
+        primitive.y[i] = (t1.x * Math.sin(angle) + (t1.y* Math.cos(angle)));
+        let t2 = translatePoint({x:primitive.x[i],y: primitive.y[i]}, {x: primitive.center[0], y: primitive.center[1]});
+        primitive.x[i] = t2.x;
+        primitive.y[i] = t2.y;
+    }
+    drawPrimitive(primitive,true,"orange");
+}
+//------------------------------------------------------------------
+//
+// Translates a primitive of the form: {
 //    verts: [],    // Must have at least 2 verts
 //    center: { x, y }
 // }
 //
-// angle: radians
+// distance: { x, y }
 //
 //------------------------------------------------------------------
-function rotatePrimitive(primitive, angle) {
+function translatePrimitive(primitive, distance) {
+    primitive.center[0] += distance.x;
+    primitive.center[1] += distance.y;
+    for( let i = 0; i < primitive.x.length; i++){
+        primitive.x[i] += distance.x;
+        primitive.y[i] += distance.y;
+    }
+    drawPrimitive(primitive,true, 'pink');
 }
 //------------------------------------------------------------------
 //
@@ -533,6 +561,8 @@ function rotatePrimitive(primitive, angle) {
 //
 //------------------------------------------------------------------
 function scaleCurve(type, controls, scale) {
+    
+    drawCurve(type,controls,true,true,true, "red");
 }
 //------------------------------------------------------------------
 //
@@ -553,18 +583,6 @@ function rotateCurve(type, controls, angle) {
 //
 //------------------------------------------------------------------
 function translateCurve(type, controls, distance) {
-}
-//------------------------------------------------------------------
-//
-// Translates a primitive of the form: {
-//    verts: [],    // Must have at least 2 verts
-//    center: { x, y }
-// }
-//
-// distance: { x, y }
-//
-//------------------------------------------------------------------
-function translatePrimitive(primitive, distance) {
 }
 
     //------------------------------------------------------------------
