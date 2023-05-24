@@ -100,7 +100,9 @@ MySample.main = (function(graphics) {
         // graphics.drawCurve(1, [[Cardinal.cP1[0],Cardinal.cP1[1]],[Cardinal.tP1[0],Cardinal.tP1[1]], [Cardinal.cP2[0],Cardinal.cP2[1]], [Cardinal.tP2[0],Cardinal.tP2[1]], [TENSION] ], SEGMENTS, true,true,true, "orange");
         // graphics.drawCurve(2, [[Bezier.cP1[0],Bezier.cP1[1]],[Bezier.tP1[0],Bezier.tP1[1]], [Bezier.cP2[0],Bezier.cP2[1]], [Bezier.tP2[0],Bezier.tP2[1]]], SEGMENTS, true,true,true, "blue");
         // graphics.drawCurve(3, [[BEZCoord.cP1[0],BEZCoord.cP1[1]],[BEZCoord.tP1[0],BEZCoord.tP1[1]], [BEZCoord.cP2[0],BEZCoord.cP2[1]], [BEZCoord.tP2[0],BEZCoord.tP2[1]]], SEGMENTS, true,true,true, "blue");
-        graphics.drawPrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]},true,"blue");
+        graphics.drawPrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]},false,"blue");
+        graphics.scalePrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]},{x: 10, y: 10})
+        
         
     }
 
@@ -112,7 +114,7 @@ MySample.main = (function(graphics) {
     function animationLoop(time) {
         let elapsedTime = time - previousTime;
         previousTime = time;
-        update(elapsedTime);
+        // update(elapsedTime);
         render();
 
         requestAnimationFrame(animationLoop);

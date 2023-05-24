@@ -86,7 +86,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let pk = (2 * deltaY * x1) - (2 * deltaX * y1) + c;
         
         // Octant 0
-        if(x1 < x2 && y2 < y1 && deltaX < deltaY) {
+        if(x1 <= x2 && y2 < y1 && deltaX < deltaY) {
             [deltaX,deltaY] = [deltaY,deltaX];
             m = deltaY/deltaX;
             b = y1 - m * x1;
@@ -103,7 +103,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             }
         }
         // Octant 7
-        else if(x1 > x2 && y2 < y1 && deltaX < deltaY) {
+        else if(x1 >= x2 && y2 < y1 && deltaX < deltaY) {
             [deltaX,deltaY] = [deltaY,deltaX];
             m = deltaY/deltaX;
             b = y1 - m * x1;
@@ -119,7 +119,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
                 }
             }
         }
-        else if (x1 < x2 && y1 < y2 && deltaX < deltaY){ // Octant 3
+        else if (x1 <= x2 && y1 < y2 && deltaX < deltaY){ // Octant 3
             [deltaX,deltaY] = [deltaY,deltaX];
             m = deltaY/deltaX;
             b = y1 - m * x1;
@@ -135,7 +135,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
                 }
             }
         }
-        else if (x1 > x2 && y1 < y2 && deltaX < deltaY){ // Octant 4
+        else if (x1 >= x2 && y1 < y2 && deltaX < deltaY){ // Octant 4
             [deltaX,deltaY] = [deltaY,deltaX];
             m = deltaY/deltaX;
             b = y1 - m * x1;
@@ -153,7 +153,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
         }
         // Octant 1
-        else if(x1 < x2 && (y2 - y1) > 0){
+        else if(x1 <= x2 && (y2 - y1) >= 0){
             for(let x = x1; x <= x2; x++){
                 drawPixel(x,y1,color);
                 if(pk >= 0) {
@@ -177,7 +177,7 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             }
         }
         // Octant 6
-        else if (x2 < x1 && y2 < y1){
+        else if (x2 <= x1 && y2 <= y1){
             for(let x = x1; x > x2; x--){
                 drawPixel(x,y1,color);
                 if(pk >= 0) {
@@ -465,6 +465,20 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 //
 //------------------------------------------------------------------
 function drawPrimitive(primitive, connect, color) {
+    for(let i = 0; i < primitive.x.length; i++){
+        drawPoint(primitive.x[i],primitive.y[i],color);
+        if(i >= 1){
+            if(connect){
+                drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
+            }else{
+                if(i == primitive.length - 1){
+                    return;
+                }
+                drawLine(primitive.x[i-1], primitive.y[i-1], primitive.x[i], primitive.y[i], color);
+            }
+        }
+        drawPoint(primitive.center[0],primitive.center[1], "yellow");
+    }
         
 }
 
@@ -478,6 +492,14 @@ function drawPrimitive(primitive, connect, color) {
 //
 //------------------------------------------------------------------
 function translatePoint(point, distance) {
+    deltaX = distance.x - point.x;
+    deltaY = distance.x = point.y;
+
+    point.x += deltaX;
+    point.y += deltaY;
+
+    return point;
+
 }
 //------------------------------------------------------------------
 //
@@ -490,6 +512,14 @@ function translatePoint(point, distance) {
 //
 //------------------------------------------------------------------
 function scalePrimitive(primitive, scale) {
+    for(let i = 0; i < primitive.x.length; i++){
+        let t = translatePoint({x: primitive.x[i], y: primitive.y[i]},{x: primitive.center[0], y: primitive.center[1]})
+        primitive.x[i] = t.x;
+        primitive.y[i] = t.y;
+        px = scale.x * primitive.x[i];
+        py = scale.y * primitive.y[i];
+        drawPoint(primitive.x[i],primitive.y[i], "yellow");
+    }    
 }
 //------------------------------------------------------------------
 //
