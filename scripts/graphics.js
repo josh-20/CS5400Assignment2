@@ -465,7 +465,9 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 //
 //------------------------------------------------------------------
 function drawPrimitive(primitive, connect, color) {
+        
 }
+
 
 
 //------------------------------------------------------------------
