@@ -531,7 +531,8 @@ function rotatePrimitive(primitive, angle) {
         primitive.x[i] = t2.x;
         primitive.y[i] = t2.y;
     }
-    drawPrimitive(primitive,true,"orange");
+
+    // drawPrimitive(primitive,true,"orange");
 }
 //------------------------------------------------------------------
 //
@@ -561,6 +562,7 @@ function translatePrimitive(primitive, distance) {
 //
 //------------------------------------------------------------------
 function scaleCurve(type, controls, scale) {
+
     
     drawCurve(type,controls,true,true,true, "red");
 }
@@ -619,6 +621,7 @@ function translateCurve(type, controls, distance) {
         drawCurve: drawCurve,
         drawPrimitive: drawPrimitive,
         translatePrimitive: translatePrimitive,
+        translatePoint: translatePoint,
         scalePrimitive: scalePrimitive,
         rotatePrimitive: rotatePrimitive,
         translateCurve: translateCurve,
