@@ -281,24 +281,24 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
 
     function drawCurveCardinal(controls, segments, showPoints, showLine, showControl, lineColor) {
         if (showControl){
-            drawPixel(controls[0][0],controls[0][1], "yellow");
-            drawPixel(controls[2][0],controls[2][1], "yellow");
-            drawLine(controls[0][0], controls[0][1], controls[0][0] + controls[1][0], controls[0][1] + controls[1][1], "white");
-            drawLine(controls[2][0], controls[2][1], controls[3][0] + controls[2][0], controls[3][1] + controls[2][1], "white");
+            drawPixel(controls.x[0],controls.y[0], "yellow");
+            drawPixel(controls.x[2],controls.y[2], "yellow");
+            drawLine(controls.x[0], controls.y[0], controls.x[0] + controls.x[1], controls.y[0] + controls.y[1], "white");
+            drawLine(controls.x[2], controls.y[2], controls.x[3] + controls.x[2], controls.y[3]+ controls.y[2], "white");
         }
 
-        let t = controls[4][0];
+        let t = controls.t[0];
         //pk and pk-1
-        let pk_x = controls[0][0];
-        let pkm1_x = controls[1][0];
-        let pk_y = controls[0][1];
-        let pkm1_y = controls[1][1];
+        let pk_x = controls.x[0];
+        let pkm1_x = controls.x[1];
+        let pk_y = controls.y[0];
+        let pkm1_y = controls.y[1];
 
         //pk+1 and pk+2
-        let pkp1_x = controls[2][0];
-        let pkp2_x = controls[3][0];
-        let pkp1_y = controls[2][1];
-        let pkp2_y = controls[3][1];
+        let pkp1_x = controls.x[2];
+        let pkp2_x = controls.x[3];
+        let pkp1_y = controls.y[2];
+        let pkp2_y = controls.y[3];
 
         let deltaU = 1/segments;
         let prevXU = 0;
@@ -562,9 +562,16 @@ function translatePrimitive(primitive, distance) {
 //
 //------------------------------------------------------------------
 function scaleCurve(type, controls, scale) {
-
-    
-    drawCurve(type,controls,true,true,true, "red");
+    for(let i = 0; i < controls.x.length; i++){
+        let t = translatePoint({x: controls.x[i], y: controls.y[i]},{x: -controls.center[0], y: -controls.center[1]});
+        controls.x[i] = t.x;
+        controls.y[i] = t.y;
+        controls.x[i] = scale.x * controls.x[i];
+        controls.y[i] = scale.y * controls.y[i];
+        let t2 = translatePoint({x: controls.x[i], y: controls.y[i]}, {x: controls.center[0], y: controls.center[1]})
+        controls.x[i] = t2.x;
+        controls.y[i] = t2.y;
+    }       
 }
 //------------------------------------------------------------------
 //

@@ -14,17 +14,11 @@ MySample.main = (function(graphics) {
     let flip = false;
     let RotationAngle = 0;
    
-    let HermiteCoord = {
-        cP1: [700,200],
-        tP1: [50,400],
-        cP2: [600,300],
-        tP2: [-200,200]
-    }
     let Cardinal = {
-        cP1: [600,500],
-        tP1: [200,400],
-        cP2: [601,500],
-        tP2: [600,550]
+        x: [600,200,601,600],
+        y: [500,400,500,550],
+        t: [10],
+        center: [500,500]    
     }
     let Bezier = {
         cP1: [600,600],
@@ -49,19 +43,19 @@ MySample.main = (function(graphics) {
     function update(elapsedTime) {
         graphics.rotatePrimitive(rS, elapsedTime/1000);
         if (!flip){
-            graphics.translatePrimitive(rS,{x: 10,y: 10})
+            graphics.translatePrimitive(rS,{x: 1,y: 1})
             if(i >= 50){
                 flip = true;
             }
-            i += elapsedTime/1000;
+            i += 1 + elapsedTime/1000;
         }else{
-
-            graphics.translatePrimitive(rS,{x: -10,y: -10})
-            i -= elapsedTime/1000;
+            graphics.translatePrimitive(rS,{x: -1,y: -1 })
+            i -= 1 - elapsedTime/1000;
             if(i <= 0){
                 flip = false;
             }
         }
+        graphics.scaleCurve(1,Cardinal, {x:.5 *elapsedTime/1000, y:.5 * elapsedTime/1000});
 
 
     }
@@ -74,11 +68,7 @@ MySample.main = (function(graphics) {
     function render() {
         graphics.clear();
         graphics.drawPrimitive({x: rS.x, y: rS.y, center: rS.center},true, color);
-        // graphics.scalePrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]},{x: .5, y: .5});
-        // graphics.rotatePrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]}, RotationAngle);
-        // graphics.translatePrimitive({x:[250,750,750,250], y:[250,250,750,750], center: [500,500]}, {x: 10, y: 10});
-        // graphics.translateCurve(0,[[HermiteCoord.cP1[0],HermiteCoord.cP1[1]],[HermiteCoord.tP1[0],HermiteCoord.tP1[1]], [HermiteCoord.cP2[0],HermiteCoord.cP2[1]],[HermiteCoord.tP2[0],HermiteCoord.tP2[1]]], .5);
-        
+        graphics.drawCurve(1,Cardinal,50,true,true,true,"yellow");
         
     }
 
