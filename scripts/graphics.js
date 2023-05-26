@@ -582,6 +582,14 @@ function scaleCurve(type, controls, scale) {
 //
 //------------------------------------------------------------------
 function rotateCurve(type, controls, angle) {
+    for(let i = 0; i < controls.x.length; i++){
+        let t1 = translatePoint({x:controls.x[i],y: controls.y[i]}, {x: -controls.center[0], y: -controls.center[1]}); // translate in
+        controls.x[i] = (t1.x * Math.cos(angle) + (t1.y * -Math.sin(angle)));
+        controls.y[i] = (t1.x * Math.sin(angle) + (t1.y* Math.cos(angle)));
+        let t2 = translatePoint({x:controls.x[i],y: controls.y[i]}, {x: controls.center[0], y: controls.center[1]});
+        controls.x[i] = t2.x;
+        controls.y[i] = t2.y;
+    }
 }
 //------------------------------------------------------------------
 //
@@ -592,6 +600,12 @@ function rotateCurve(type, controls, angle) {
 //
 //------------------------------------------------------------------
 function translateCurve(type, controls, distance) {
+    controls.center[0] += distance.x;
+    controls.center[1] += distance.y;
+    for( let i = 0; i < controls.x.length; i++){
+        controls.x[i] += distance.x;
+        controls.y[i] += distance.y;
+    }
 }
 
     //------------------------------------------------------------------
