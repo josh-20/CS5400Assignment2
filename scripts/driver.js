@@ -60,8 +60,10 @@ MySample.main = (function(graphics) {
                     }
                     graphics.scaleCurve(1,Cardinal,{x:  (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
                     graphics.scalePrimitive(rS,{x:  (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
-                    graphics.scalePrimitive(cBox1,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000})
-                    graphics.scalePrimitive(cBox2,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000})
+                    graphics.scalePrimitive(cBox1,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
+                    graphics.scalePrimitive(cBox2,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
+                    graphics.translateCurve(2,Bezier,{x:.5,y:1});
+                    graphics.translateCurve(3,BEZCoord,{x:-.5,y:-1});
                     graphics.rotateCurve(3,BEZCoord, elapsedTime/10000);
                     graphics.translatePrimitive(cBox1,{x:.5,y:1})
                     graphics.translatePrimitive(cBox2,{x:.5,y:1})
@@ -73,14 +75,16 @@ MySample.main = (function(graphics) {
                         flip = false;
                         color = colors[colorCount];
                         colorCount += 1;
-            }
-            graphics.rotateCurve(2,Bezier, elapsedTime/10000);
-            graphics.scalePrimitive(rS,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
-            graphics.scalePrimitive(cBox1,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
-            graphics.scalePrimitive(cBox2,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
-            graphics.scaleCurve(1,Cardinal,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
-            graphics.translatePrimitive(cBox1,{x:-.5,y:-1})
-            graphics.translatePrimitive(cBox2,{x:-.5,y:-1})
+                    }
+                    graphics.rotateCurve(2,Bezier, elapsedTime/10000);
+                    graphics.scalePrimitive(rS,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
+                    graphics.scalePrimitive(cBox1,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
+                    graphics.scalePrimitive(cBox2,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
+                    graphics.scaleCurve(1,Cardinal,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
+                    graphics.translateCurve(2,Bezier,{x:-.5,y:-1});
+                    graphics.translateCurve(3,BEZCoord,{x:.5,y:1});
+                    graphics.translatePrimitive(cBox1,{x:-.5,y:-1})
+                    graphics.translatePrimitive(cBox2,{x:-.5,y:-1})
             i -= (1 + elapsedTime/1000);
         }
         if(colorCount == colors.length -1){
