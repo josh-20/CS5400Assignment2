@@ -356,10 +356,10 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
         let prevYU = 0;
         let deltaU = 1/segments
         if(showControl){
-            drawPixel(controls[0][0],controls[0][1], "yellow");
-            drawPixel(controls[2][0],controls[2][1], "yellow");
-            drawLine(controls[0][0], controls[0][1], controls[0][0] + controls[1][0], controls[0][1] + controls[1][1], "white");
-            drawLine(controls[3][0], controls[3][1], controls[3][0] + controls[2][0], controls[3][1] + controls[2][1], "white");
+            drawPixel(controls.x[0],controls.y[0], "yellow");
+            drawPixel(controls.x[2],controls.y[2], "yellow");
+            drawLine(controls.x[0], controls.y[0], controls.x[0] + controls.x[1], controls.y[0] + controls.y[1], "white");
+            drawLine(controls.x[3], controls.y[3], controls.x[3] + controls.x[2], controls.y[3] + controls.y[2], "white");
         }
         let bezUMemo = function(){
             let memo = []
@@ -382,8 +382,8 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
             let yu = 0;
             for(let k = 0; k <= n; k++){
                 let BEZ = bezUMemo(n,u,k);
-                xu += controls[k][0] * BEZ;
-                yu += controls[k][1] * BEZ;
+                xu += controls.x[k] * BEZ;
+                yu += controls.y[k] * BEZ;
             }
             if (showPoints){
                 drawPoint(xu,yu,"yellow");
@@ -406,22 +406,22 @@ MySample.graphics = (function(pixelsX, pixelsY, showPixels) {
     function drawCurveBezierMatrix(controls, segments, showPoints, showLine, showControl, lineColor) {
         
         if(showControl){
-            drawPixel(controls[0][0],controls[0][1], "yellow");
-            drawPixel(controls[2][0],controls[2][1], "yellow");
-            drawLine(controls[0][0], controls[0][1], controls[0][0] + controls[1][0], controls[0][1] + controls[1][1], "white");
-            drawLine(controls[3][0], controls[3][1], controls[3][0] + controls[2][0], controls[3][1] + controls[2][1], "white");
+            drawPixel(controls.x[0],controls.y[0], "yellow");
+            drawPixel(controls.x[2],controls.y[2], "yellow");
+            drawLine(controls.x[0], controls.y[0], controls.x[0] + controls.x[1], controls.y[0] + controls.y[1], "white");
+            drawLine(controls.x[3], controls.y[3], controls.x[3] + controls.x[2], controls.y[3] + controls.y[2], "white");
         }
         // control point and slope for x(u)
-        let p0_x = controls[0][0];
-        let p1_x = controls[3][0];
-        let p_0_x = controls[1][0];
-        let p_1_x = controls[2][0];
+        let p0_x = controls.x[0];
+        let p1_x = controls.x[3];
+        let p_0_x = controls.x[1];
+        let p_1_x = controls.x[2];
 
         // control point and slopes for y(u)
-        let p0_y = controls[0][1];
-        let p1_y = controls[3][1];
-        let p_0_y = controls[1][1];
-        let p_1_y = controls[2][1];
+        let p0_y = controls.y[0];
+        let p1_y = controls.y[3];
+        let p_0_y = controls.y[1];
+        let p_1_y = controls.y[2];
 
         //segments difference
         let deltaU = 1/segments;
@@ -474,7 +474,7 @@ function drawPrimitive(primitive, connect, color) {
     if (connect){
         drawLine(primitive.x[0], primitive.y[0], primitive.x[primitive.x.length - 1], primitive.y[primitive.y.length - 1], color)
     }
-    drawPoint(primitive.center[0],primitive.center[1], "yellow");
+    // drawPoint(primitive.center[0],primitive.center[1], "yellow");
     
 }
 //------------------------------------------------------------------
@@ -669,4 +669,4 @@ function translateCurve(type, controls, distance) {
     });
 
     return api;
-}(1000, 1000, true));
+}(2000, 2000, false));

@@ -12,54 +12,94 @@ MySample.main = (function(graphics) {
     let SEGMENTS = 1;
     let i = 1;
     let flip = false;
-    let RotationAngle = 0;
+    
+    
    
     let Cardinal = {
-        x: [600,200,601,600],
-        y: [500,400,500,550],
+        x: [250,750,750,250],
+        y: [250,250,750,750],
         t: [10],
         center: [500,500]    
     }
     let Bezier = {
-        cP1: [600,600],
-        tP1: [50,400],
-        cP2: [573,800],
-        tP2: [-200,200]
+        x: [250,750,750,250],
+        y: [250,250,750,750],
+        center: [500,500]
     }
     let BEZCoord = {
-        cP1: [650,610],
-        tP1: [50,400],
-        cP2: [550,820],
-        tP2: [-200,200]
+        x: [750,250,250,750],
+        y: [250,250,750,750],
+        center:[500,500]
     }
     let rS = {
         x: [250,750,750,250],
         y:[250,250,750,750],
         center: [500,500]
     }
+    let cBox1 = {
+        x: [750,850,850,750],
+        y:[250,250,150,150],
+        center: [500,500]
+    }
+    let cBox2 = {
+        x: [250,250,150,150],
+        y:[750,850,850,750],
+        center: [500,500]
+    }
     let colors = ["blue","green","yellow","white","orange","brown","red","pink"]
     let color = "black";
+    let colorCount = 0;
 
     function update(elapsedTime) {
-        graphics.rotatePrimitive(rS, elapsedTime/1000);
-        if (!flip){
-            graphics.translatePrimitive(rS,{x: 1,y: 1})
-            if(i >= 50){
+        if(!flip){
+            if (i >= 500){
                 flip = true;
+                
+                        color = colors[colorCount];
+                        colorCount += 1;
+                    }
+                    graphics.scaleCurve(1,Cardinal,{x:  (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
+                    graphics.scalePrimitive(rS,{x:  (1 + elapsedTime/10000),y: 1 + elapsedTime/10000});
+                    graphics.scalePrimitive(cBox1,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000})
+                    graphics.scalePrimitive(cBox2,{x: (1 + elapsedTime/10000),y: 1 + elapsedTime/10000})
+                    graphics.rotateCurve(3,BEZCoord, elapsedTime/10000);
+                    graphics.translatePrimitive(cBox1,{x:.5,y:1})
+                    graphics.translatePrimitive(cBox2,{x:.5,y:1})
+                    i += (1 + elapsedTime/1000);
+                    
+                }else{
+                    if(i <= 0)
+                    {
+                        flip = false;
+                        color = colors[colorCount];
+                        colorCount += 1;
             }
-            i += 1 + elapsedTime/1000;
-        }else{
-            graphics.translatePrimitive(rS,{x: -1,y: -1 })
-            i -= 1 - elapsedTime/1000;
-            if(i <= 0){
-                flip = false;
-            }
+            graphics.rotateCurve(2,Bezier, elapsedTime/10000);
+            graphics.scalePrimitive(rS,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
+            graphics.scalePrimitive(cBox1,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
+            graphics.scalePrimitive(cBox2,{x: (1 - elapsedTime/10000),y: 1 - elapsedTime/10000})
+            graphics.scaleCurve(1,Cardinal,{x:  (1 - elapsedTime/10000),y: 1 - elapsedTime/10000});
+            graphics.translatePrimitive(cBox1,{x:-.5,y:-1})
+            graphics.translatePrimitive(cBox2,{x:-.5,y:-1})
+            i -= (1 + elapsedTime/1000);
         }
-        graphics.scaleCurve(1,Cardinal, {x:.5 *elapsedTime/1000, y:.5 * elapsedTime/1000});
+        if(colorCount == colors.length -1){
+            colorCount = 0;
+        }
+        graphics.rotatePrimitive(rS, elapsedTime/10000);
+        graphics.rotateCurve(1,Cardinal, elapsedTime/10000);
+        graphics.rotateCurve(2,Bezier, elapsedTime/10000);
+        graphics.rotateCurve(3,BEZCoord, elapsedTime/10000);
+        graphics.rotatePrimitive(cBox1,elapsedTime/10000);
+        graphics.rotatePrimitive(cBox2,elapsedTime/10000);
 
+        
 
+        // graphics.translateCurve(1,Cardinal,{x:10*elapsedTime/1000,y:10 * elapsedTime/1000});
+        
+        
     }
-
+    
     //------------------------------------------------------------------
     //
     // Rendering code goes here
@@ -67,8 +107,12 @@ MySample.main = (function(graphics) {
     //------------------------------------------------------------------
     function render() {
         graphics.clear();
-        graphics.drawPrimitive({x: rS.x, y: rS.y, center: rS.center},true, color);
-        graphics.drawCurve(1,Cardinal,50,true,true,true,"yellow");
+        graphics.drawPrimitive(rS,true, color);
+        graphics.drawCurve(3,BEZCoord,50,true,true,false,"yellow");
+        graphics.drawCurve(2,Bezier,50,true,true,false,"orange")
+        graphics.drawCurve(1,Cardinal,50,true,true,false,"blue");
+        graphics.drawPrimitive(cBox1,true,color);
+        graphics.drawPrimitive(cBox2,true, color);
         
     }
 
